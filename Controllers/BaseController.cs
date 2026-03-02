@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using PaymentService.Enums;
 using PaymentService.Interfaces;
 using PaymentService.Responses;
@@ -8,6 +9,12 @@ namespace PaymentService.Controllers;
 [ApiController]
 public abstract class BaseController : ControllerBase
 {
+    protected int GetUserId()
+    {
+        var claim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        return Convert.ToInt32(claim);
+    }
+    
     protected IActionResult MapError<T>(Result<T> result) => result.ErrorType switch
     {
         ErrorType.NotFound     => NotFound(new { error = result.Error }),
